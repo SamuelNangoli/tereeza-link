@@ -1,0 +1,3 @@
+import {cookies} from 'next/headers';import {origin,body,limit,equal,env,session,failure} from '@/lib/server';import {AppError} from '@/lib/validation';
+export async function POST(req:Request){try{origin(req);await limit(req,'login',5,900);const b=await body(req);if(typeof b.password!=='string'||!equal(b.password,env('ADMIN_PASSWORD')))throw new AppError('Incorrect password.',401);(await cookies()).set('tereeza-admin',session(),{httpOnly:true,secure:process.env.NODE_ENV==='production',sameSite:'strict',path:'/',maxAge:28800});return Response.json({ok:true})}catch(e){return failure(e)}}
+export async function DELETE(req:Request){try{origin(req);(await cookies()).delete('tereeza-admin');return Response.json({ok:true})}catch(e){return failure(e)}}

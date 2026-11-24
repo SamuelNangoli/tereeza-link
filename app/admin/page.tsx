@@ -1,0 +1,1 @@
+import Admin from '@/components/admin';export const metadata={title:'Admin',robots:{index:false,follow:false},alternates:{canonical:null}};export default function Page(){return <main><div className="eyebrow">TEREEZA CONTROL</div><h1>Link management.</h1><Admin/></main>}

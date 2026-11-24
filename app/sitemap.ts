@@ -1,0 +1,1 @@
+import type {MetadataRoute} from 'next';export default function sitemap():MetadataRoute.Sitemap{return ['','/privacy','/terms','/report'].map(p=>({url:(process.env.SITE_URL||'https://link.trenttech.online')+p}))}

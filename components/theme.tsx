@@ -1,0 +1,3 @@
+"use client";
+import {useEffect,useState} from 'react';
+export default function Theme(){const [mode,setMode]=useState('auto');useEffect(()=>{const saved=localStorage.getItem('theme')||'auto';setMode(saved);const apply=()=>{const h=new Date().getHours();document.documentElement.dataset.theme=saved==='auto'?(h>=7&&h<19?'light':'dark'):saved};apply();const id=setInterval(apply,30000);if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});return()=>clearInterval(id)},[mode]);return <select aria-label="Theme" value={mode} onChange={e=>{localStorage.setItem('theme',e.target.value);setMode(e.target.value)}}><option value="auto">Auto theme</option><option value="light">Light</option><option value="dark">Dark</option></select>}

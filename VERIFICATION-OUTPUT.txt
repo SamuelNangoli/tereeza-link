@@ -1,0 +1,123 @@
+
+> tereeza-link@1.0.0 build
+> next build
+
+▲ Next.js 16.4.6 (Turbopack)
+- Environments: .env.local
+✓ Running next.config.ts took 42ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1186ms
+  Running TypeScript ...
+  Finished TypeScript in 2.5s ...
+  Collecting page data using 5 workers ...
+  Generating static pages using 5 workers (0/15) ...
+  Generating static pages using 5 workers (3/15) 
+  Generating static pages using 5 workers (7/15) 
+  Generating static pages using 5 workers (11/15) 
+✓ Generating static pages using 5 workers (15/15) in 452ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /[slug]
+├ ○ /admin
+├ ƒ /api/admin/links
+├ ƒ /api/admin/reports
+├ ƒ /api/admin/session
+├ ƒ /api/links
+├ ƒ /api/report
+├ ƒ /api/stats/[slug]
+├ ○ /manifest.webmanifest
+├ ○ /privacy
+├ ○ /report
+├ ○ /robots.txt
+├ ○ /sitemap.xml
+├ ƒ /stats/[slug]
+└ ○ /terms
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+> tereeza-link@1.0.0 test:e2e
+> node tests/neon-e2e.mjs
+
+PASS PostgreSQL: authenticated TLS (verified certificate) query.
+PASS production Next.js app started on http://localhost:3100
+PASS POST /api/links: 201, persisted custom alias.
+PASS alias collision, URL/JSON validation, wrong-origin rejection, private analytics and admin authorization.
+PASS redirect 302, no-store, recorded click, referrer privacy, deduplication, HEAD/bot exclusion.
+PASS expiration 410, unknown 404, admin session/list, disable/re-enable and abuse reports.
+PASS HTTP rate limit 429 and atomic concurrent database limit (5/12 admitted).
+PASS logout, PWA manifest and service worker.
+PASS ALL: production app → Neon PostgreSQL → redirects, analytics, moderation, reports and limits.
+Cleaned up only this run’s disposable test records.
+
+> tereeza-link@1.0.0 db:migrate
+> node scripts/migrate.mjs
+
+Already applied: 001_initial.sql
+Database migrations complete.
+
+> tereeza-link@1.0.0 test
+> tsx --test tests/*.test.ts
+
+TAP version 13
+# Subtest: Neon connections explicitly verify TLS certificates while preserving credentials and options
+ok 1 - Neon connections explicitly verify TLS certificates while preserving credentials and options
+  ---
+  duration_ms: 3.407156
+  type: 'test'
+  ...
+# Subtest: local PostgreSQL connection settings are preserved
+ok 2 - local PostgreSQL connection settings are preserved
+  ---
+  duration_ms: 0.350893
+  type: 'test'
+  ...
+# Subtest: normalizes URLs and custom aliases
+ok 3 - normalizes URLs and custom aliases
+  ---
+  duration_ms: 3.074247
+  type: 'test'
+  ...
+# Subtest: rejects dangerous protocols, credentials, local hosts, numeric IP spellings and self loops
+ok 4 - rejects dangerous protocols, credentials, local hosts, numeric IP spellings and self loops
+  ---
+  duration_ms: 3.449104
+  type: 'test'
+  ...
+# Subtest: rejects routing collisions and malformed aliases
+ok 5 - rejects routing collisions and malformed aliases
+  ---
+  duration_ms: 0.406138
+  type: 'test'
+  ...
+# Subtest: blocklist includes subdomains without blocking unrelated suffixes
+ok 6 - blocklist includes subdomains without blocking unrelated suffixes
+  ---
+  duration_ms: 0.789491
+  type: 'test'
+  ...
+# Subtest: expiration enforces future and maximum lifetime
+ok 7 - expiration enforces future and maximum lifetime
+  ---
+  duration_ms: 0.863441
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 582.95241
+
+> tereeza-link@1.0.0 typecheck
+> tsc --noEmit
+

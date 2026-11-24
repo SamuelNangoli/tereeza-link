@@ -1,0 +1,1 @@
+import Stats from '@/components/stats';export const metadata={title:'Private analytics',robots:{index:false,follow:false},alternates:{canonical:null}};export default async function Page({params}:{params:Promise<{slug:string}>}){return <main><h1>Link insights.</h1><Stats slug={(await params).slug}/></main>}
