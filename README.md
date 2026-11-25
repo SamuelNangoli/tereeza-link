@@ -4,7 +4,7 @@ Next.js 16 / React 19 / TypeScript / Tailwind 4 URL shortener for **https://link
 
 ## Features
 
-Public URL creation, case-insensitive custom aliases, expiration, noncached 302 redirects, copy/share, QR PNG download, private token-based analytics, admin password sessions and reversible moderation, abuse reports, atomic PostgreSQL rate limits, optional Google Web Risk screening, metadata/sitemap, installable PWA with offline fallback, and visitor-local 07:00–19:00 light theme with persistent Auto/Light/Dark override. Charcoal #151515, amber #FFAA00, green #00E676 branding. The wordmark is text and install icons are neutral letter T placeholders.
+Public URL creation, case-insensitive custom aliases, expiration, noncached 302 redirects, copy/share, QR PNG download, private token-based analytics, admin password sessions and reversible moderation, abuse reports, atomic PostgreSQL rate limits, optional Google Web Risk screening, metadata/sitemap, installable PWA with offline fallback, and visitor-local 07:00–19:00 light theme with persistent Auto/Light/Dark override. Charcoal #151515, amber #FFAA00, green #00E676 branding. The header logo, favicon, Apple touch icon and PWA install icons use the supplied official Tereeza artwork.
 
 ## Neon project
 
