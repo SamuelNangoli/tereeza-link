@@ -6,3 +6,30 @@ test('rejects dangerous protocols, credentials, local hosts, numeric IP spelling
 test('rejects routing collisions and malformed aliases',()=>{for(const a of ['admin','API','stats','sw.js','a','a/b','hello world','_next','a'.repeat(41)])assert.throws(()=>alias(a));});
 test('blocklist includes subdomains without blocking unrelated suffixes',()=>{process.env.BLOCKED_HOSTS='bad.example';assert.throws(()=>destination('https://sub.bad.example'));assert.equal(destination('https://notbad.example/'),'https://notbad.example/');delete process.env.BLOCKED_HOSTS});
 test('expiration enforces future and maximum lifetime',()=>{assert.equal(expiration(null),null);for(const x of ['yesterday',new Date(Date.now()-1000).toISOString(),new Date(Date.now()+400*86400000).toISOString()])assert.throws(()=>expiration(x));assert.ok(expiration(new Date(Date.now()+3600000).toISOString()))});
+test('normalizes configured blocked hostnames', () => {
+  const previous = process.env.BLOCKED_HOSTS;
+
+  try {
+    process.env.BLOCKED_HOSTS = 'BAD.EXAMPLE., Other.Example';
+
+    for (const url of [
+      'https://bad.example/',
+      'https://sub.bad.example/',
+      'https://other.example/',
+      'https://sub.other.example/',
+    ]) {
+      assert.throws(() => destination(url), Error, url);
+    }
+
+    assert.equal(
+      destination('https://good.example/'),
+      'https://good.example/'
+    );
+  } finally {
+    if (previous === undefined) {
+      delete process.env.BLOCKED_HOSTS;
+    } else {
+      process.env.BLOCKED_HOSTS = previous;
+    }
+  }
+});
