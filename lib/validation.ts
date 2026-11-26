@@ -56,7 +56,15 @@ export function destination(value: unknown) {
     );
   }
 
+  // Reject leading and trailing whitespace instead of silently trimming it
+  if (value !== value.trim()) {
+    throw new AppError(
+      'Remove whitespace from the beginning or end of the URL.'
+    );
+  }
+
   let u: URL;
+
 
   try {
     u = new URL(value);
