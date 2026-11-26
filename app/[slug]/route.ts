@@ -1,9 +1,13 @@
 
 import { after } from 'next/server';
-import { clientIp } from '@/lib/client-ip';
+
 import { hash, failure } from '@/lib/server';
 import { findLink, recordClick } from '@/lib/database';
 import { alias, AppError, destination } from '@/lib/validation';
+import {
+  clickDetails,
+  isTrackableVisit,
+} from '@/lib/click-tracking';
 
 export const dynamic = 'force-dynamic';
 
@@ -37,41 +41,22 @@ async function redirect(
     if (track) {
       after(async () => {
         try {
-          const ua = req.headers.get('user-agent') || '';
-
-          // Exclude known bots, crawlers and preview requests.
-          if (/bot|crawler|spider|preview/i.test(ua)) {
+          // Exclude bots, crawlers and preview requests.
+          if (!isTrackableVisit(req.headers)) {
             return;
           }
 
-          // Extract the referral hostname.
-          let ref = 'direct';
-
-          try {
-            ref = new URL(
-              req.headers.get('referer') || ''
-            ).hostname;
-          } catch {
-            // Keep the default referrer.
-          }
-
-          // Use consistent Vercel client-IP extraction.
-          const ip = clientIp(req.headers);
-
-          // Hash the visitor identifier with the UTC date.
-          const visitorHash = hash(
-            new Date().toISOString().slice(0, 10) + ip
+          // Prepare visitor hash, referrer and device details.
+          const { visitor, referrer, device } = clickDetails(
+            req.headers,
+            hash
           );
 
-          // Classify the visitor's device.
-          const device = /mobile|android|iphone/i.test(ua)
-            ? 'mobile'
-            : 'desktop';
-
+          // Store the visit in the database.
           await recordClick(
             data.id,
-            visitorHash,
-            ref.slice(0, 253),
+            visitor,
+            referrer,
             device
           );
         } catch {
