@@ -83,12 +83,26 @@ export function destination(value: unknown) {
     u.hostname.replace(/^\[|\]$/g, '')
   );
 
-  // Reject IP addresses, localhost, and internal domains
+  // Reject IP addresses and non-public or special-use domains
+  const restrictedDomains = [
+    'localhost',
+    'local',
+    'internal',
+    'test',
+    'invalid',
+    'home.arpa',
+    'onion',
+  ];
+
+  const isRestrictedDomain = restrictedDomains.some(
+    (domain) =>
+      h === domain || h.endsWith(`.${domain}`)
+  );
+
   if (
     ipaddr.isValid(h) ||
     !h.includes('.') ||
-    /\.(localhost|local|internal|test|invalid)$/.test(h) ||
-    h === 'localhost'
+    isRestrictedDomain
   ) {
     throw new AppError(
       'Use a public domain name, not a local or IP address.'

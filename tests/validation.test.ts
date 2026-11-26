@@ -33,3 +33,34 @@ test('normalizes configured blocked hostnames', () => {
     }
   }
 });
+
+test('rejects additional special-use domains', () => {
+  const blockedUrls = [
+    'http://printer.home.arpa/',
+    'https://home.arpa/',
+    'http://service.onion/',
+    'https://example.onion/',
+    'https://printer.HOME.ARPA/',
+    'https://service.onion./',
+  ];
+
+  for (const url of blockedUrls) {
+    assert.throws(
+      () => destination(url),
+      Error,
+      `Expected ${url} to be rejected`
+    );
+  }
+
+  const allowedUrls = [
+    'https://example.com/',
+    'https://github.com/',
+  ];
+
+  for (const url of allowedUrls) {
+    assert.doesNotThrow(
+      () => destination(url),
+      `Expected ${url} to be accepted`
+    );
+  }
+});
