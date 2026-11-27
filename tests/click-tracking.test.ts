@@ -103,3 +103,31 @@ test('truncates referrers to 253 characters', () => {
 
   assert.ok(result.referrer.length <= 253);
 });
+
+// Speculative browser requests must not consume the daily visitor dedup entry.
+test('excludes prefetch and prerender requests with browser user agents', () => {
+  for (const purposeHeader of ['sec-purpose', 'purpose']) {
+    for (const purpose of ['prefetch', 'prefetch;prerender', 'PREFETCH']) {
+      assert.equal(isTrackableVisit(new Headers({
+        'user-agent': 'Mozilla/5.0',
+        [purposeHeader]: purpose,
+      })), false, `${purposeHeader}: ${purpose}`);
+    }
+  }
+});
+
+test('checks both purpose headers when they are present', () => {
+  assert.equal(isTrackableVisit(new Headers({
+    'user-agent': 'Mozilla/5.0',
+    'sec-purpose': 'navigate',
+    purpose: 'prefetch',
+  })), false);
+});
+
+test('allows an actual navigation after speculative loading', () => {
+  assert.equal(isTrackableVisit(new Headers({
+    'user-agent': 'Mozilla/5.0',
+    'sec-fetch-mode': 'navigate',
+    'sec-fetch-user': '?1',
+  })), true);
+});

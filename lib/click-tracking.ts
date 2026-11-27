@@ -10,7 +10,13 @@ export type ClickDetails = {
 export function isTrackableVisit(headers: Headers): boolean {
   const userAgent = headers.get('user-agent') || '';
 
-  return !/bot|crawler|spider|preview/i.test(userAgent);
+  // Speculative loads use ordinary browser user agents, but are not clicks.
+  // Check both the current header and its legacy equivalent.
+  const isPrefetch = ['sec-purpose', 'purpose'].some((name) =>
+    /\bprefetch\b/i.test(headers.get(name) || '')
+  );
+
+  return !isPrefetch && !/bot|crawler|spider|preview/i.test(userAgent);
 }
 
 export function clickDetails(
