@@ -1,6 +1,6 @@
 # Tereeza Link — Neon edition
 
-Next.js 16 / React 19 / TypeScript / Tailwind 4 URL shortener for **https://link.trenttech.online**, using PostgreSQL on Neon. No Supabase dependency, public accounts, or self-managed server required. Next.js runs on Vercel; Neon stores links and analytics.
+Next.js 16 / React 19 / TypeScript / Tailwind 4 URL shortener for **https://tereezalink.trenttech.online**, using PostgreSQL on Neon. No Supabase dependency, public accounts, or self-managed server required. Next.js runs on Vercel; Neon stores links and analytics.
 
 ## Features
 
@@ -58,7 +58,7 @@ Neon provides the database URLs only. Add these private application settings to 
 | --- | --- |
 | `DATABASE_URL` | Neon pooled runtime connection, supplied by Neon |
 | `DATABASE_URL_UNPOOLED` | Neon direct migration connection, supplied by Neon |
-| `SITE_URL` | `http://localhost:3000` locally; `https://link.trenttech.online` in production, no trailing slash |
+| `SITE_URL` | `http://localhost:3000` locally; `https://tereezalink.trenttech.online` in production, no trailing slash |
 | `ADMIN_PASSWORD` | Unique strong admin password |
 | `SESSION_SECRET` | Separate random 32-byte hex secret for eight-hour signed admin sessions |
 | `IP_HASH_SECRET` | Separate random 32-byte hex secret for IP and management-token hashing |
@@ -101,22 +101,22 @@ Run `npm run db:cleanup` once per day through a trusted scheduler with `DATABASE
 1. Put this project in a private Git repository, including `package-lock.json` and `neon.ts`. Exclude `.env*` secrets, `.neon`, `.next`, and `node_modules`.
 2. Vercel → Add New → Project → import the repository. Framework: Next.js. Root directory: the directory containing this `package.json`. If the repository contains this whole workspace, choose `outputs/tereeza-link`.
 3. Select Node.js 22.x or a supported newer release. Install `npm ci`, build `npm run build`, default Next.js output directory. Enable Fluid compute for the pool lifecycle integration.
-4. Add `DATABASE_URL` and the app variables listed above to Production settings. The runtime does not need `DATABASE_URL_UNPOOLED`; keep that in your migration environment. Set `SITE_URL=https://link.trenttech.online`.
+4. In Environment Variables, add `DATABASE_URL`, `IP_HASH_SECRET`, `ADMIN_PASSWORD`, and `SESSION_SECRET` for **Production**, using the values described above. Generate each secret separately and keep its value private. The runtime does not need `DATABASE_URL_UNPOOLED`; keep that in your migration environment. Set `SITE_URL=https://tereezalink.trenttech.online`.
 5. Deploy after the schema is migrated. For Preview deployments use a separate Neon branch/database and an exact matching Preview `SITE_URL`, not production data.
-6. Settings → Domains → add `link.trenttech.online`. Copy the exact CNAME target Vercel displays.
+6. Settings → Domains → add `tereezalink.trenttech.online`. Copy the exact CNAME target Vercel displays.
 7. Follow the Namecheap steps below. Wait for valid DNS configuration and HTTPS certificate issuance.
-8. Redeploy whenever build-time settings such as `SITE_URL` change; generated SEO metadata depends on them.
+8. After adding or changing environment variables, redeploy the latest Production deployment and wait for **Ready**. Existing deployments do not pick up newly saved values; generated SEO metadata also depends on `SITE_URL`.
 
 Official Vercel guide: https://vercel.com/docs/domains/working-with-domains/add-a-domain
 
-## Namecheap: only the `link` subdomain
+## Namecheap: only the `tereezalink` subdomain
 
 1. Sign in to Namecheap → **Domain List → trenttech.online → Manage**.
 2. Check **Nameservers**. If using Namecheap BasicDNS/PremiumDNS/FreeDNS, go to **Advanced DNS → Host Records**. If using Cloudflare or hosting nameservers, edit DNS at that authoritative provider instead; Namecheap records would have no effect.
-3. Find records whose Host is exactly **link**. Remove conflicting A, AAAA, CNAME, or URL Redirect records for **link** only. Preserve records for `@`, `www`, mail, `tereezaspeed`, and other subdomains.
-4. **Add New Record → CNAME Record**. Set **Host: `link`**, **Value: the exact hostname Vercel displayed**, **TTL: Automatic**. Use no `https://`, path, or slash. Save.
+3. Find records whose Host is exactly **tereezalink**. Remove conflicting A, AAAA, CNAME, or URL Redirect records for **tereezalink** only. Preserve records for `@`, `www`, mail, `tereezaspeed`, and other subdomains.
+4. **Add New Record → CNAME Record**. Set **Host: `tereezalink`**, **Value: the exact hostname Vercel displayed**, **TTL: Automatic**. Use no `https://`, path, or slash. Save.
 5. If Vercel asks for TXT ownership verification, add exactly its displayed TXT Host and Value. Follow the dashboard's verification instructions.
-6. Return to Vercel → Domains and refresh verification. DNS propagation varies. Test `https://link.trenttech.online` over HTTPS after verification.
+6. Return to Vercel → Domains and refresh verification. DNS propagation varies. Test `https://tereezalink.trenttech.online` over HTTPS after verification.
 
 Namecheap guidance: https://www.namecheap.com/support/knowledgebase/article.aspx/10058/10/namecheap-dns-limits/
 
