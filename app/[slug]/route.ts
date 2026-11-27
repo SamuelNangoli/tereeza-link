@@ -1,9 +1,10 @@
 
 import { after } from 'next/server';
 
+import { assertLinkAvailable } from '@/lib/link-availability';
 import { hash, failure } from '@/lib/server';
 import { findLink, recordClick } from '@/lib/database';
-import { alias, AppError, destination } from '@/lib/validation';
+import { alias, destination } from '@/lib/validation';
 import {
   clickDetails,
   isTrackableVisit,
@@ -17,27 +18,20 @@ async function redirect(
   track: boolean
 ) {
   try {
+    // Validate the requested short-link alias.
     const slug = alias((await ctx.params).slug);
+
+    // Retrieve the short link from the database.
     const data = await findLink(slug);
 
-    if (!data) {
-      throw new AppError('Link not found.', 404);
-    }
+    // Reject missing, disabled or expired links.
+    // Returns 404 for missing links and 410 for unavailable links.
+    assertLinkAvailable(data);
 
-    if (
-      data.disabled ||
-      (data.expires_at &&
-        Date.parse(data.expires_at) <= Date.now())
-    ) {
-      throw new AppError(
-        'This link is no longer available.',
-        410
-      );
-    }
-
+    // Validate the destination URL.
     const url = destination(data.url);
 
-    // Record clicks asynchronously without delaying redirects.
+    // Record eligible clicks asynchronously.
     if (track) {
       after(async () => {
         try {
@@ -65,6 +59,7 @@ async function redirect(
       });
     }
 
+    // Redirect without caching the response.
     return new Response(null, {
       status: 302,
       headers: {
@@ -79,11 +74,13 @@ async function redirect(
   }
 }
 
+// GET redirects and records eligible clicks.
 export const GET = (
   req: Request,
   ctx: { params: Promise<{ slug: string }> }
 ) => redirect(req, ctx, true);
 
+// HEAD redirects without recording clicks.
 export const HEAD = (
   req: Request,
   ctx: { params: Promise<{ slug: string }> }
